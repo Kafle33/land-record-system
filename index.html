@@ -18,7 +18,7 @@
       .then((response) => response.text())
       .then((mainScript) => {
         mount({
-          requirements: ["streamlit", "pandas"],
+          requirements: ["streamlit", "pandas", "requests"],
           entrypoint: "app.py",
           files: {
             "app.py": mainScript,
