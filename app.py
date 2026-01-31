@@ -69,17 +69,27 @@ def main():
         
         available_columns = df.columns.tolist()
         
+        # Remove any artifact columns like 'Unnamed: 0'
+        df = df.loc[:, ~df.columns.str.contains('^Unnamed')]
+        available_columns = df.columns.tolist()
+
         # Create dynamic filters
         filtered_df = df.copy()
 
         # 1. Plot Filter (Moved to Top)
         if col_plot in available_columns:
-            # User requested text input for Kit/Plot number (unique ID)
-            selected_plot = st.sidebar.text_input(f"{col_plot}")
+            # User requested "search as i type" which is best supported by selectbox with index=None
+            # Convert to string options for consistent searching
+            plot_options = sorted(df[col_plot].dropna().unique().astype(str).tolist())
+            selected_plot = st.sidebar.selectbox(
+                f"{col_plot}", 
+                plot_options,
+                index=None,
+                placeholder="छान्नुहोस् (Select)"
+            )
             if selected_plot:
-                 # Convert column to string for comparison to handle potential mixed types
-                 # Strip whitespace to be safe
-                filtered_df = filtered_df[filtered_df[col_plot].astype(str) == selected_plot.strip()]
+                 # Search against string version of the column
+                filtered_df = filtered_df[filtered_df[col_plot].astype(str) == selected_plot]
 
         # 2. VDC Filter
         if col_vdc in available_columns:
