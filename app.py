@@ -99,8 +99,8 @@ TRANSLATIONS = {
         'loading_msg': "Loading Data...",
         'connection_error': "Could not load data. Please check internet connection or try again.",
         'total_results': "Total Results",
-        'kit_number': "Plot/Kit No.",
-        'vdc': "Former VDC",
+        'kit_number': "Plot/Kitta No.",
+        'vdc': "VDC",
         'ward': "Ward No.",
         'land_use': "Land Use",
         'select_placeholder': "Type or Select",
@@ -175,7 +175,7 @@ def main():
             # Make sure all are text.
             plot_options = sorted(df[col_plot].dropna().unique().astype(str).tolist())
             selected_plot = st.sidebar.selectbox(
-                f"{col_plot}", 
+                t['kit_number'], 
                 plot_options,
                 index=None,
                 placeholder=t['select_placeholder']
@@ -189,7 +189,7 @@ def main():
             # Start with nothing selected
             vdc_options = sorted(df[col_vdc].dropna().unique().tolist())
             selected_vdc = st.sidebar.selectbox(
-                f"{col_vdc}", 
+                t['vdc'], 
                 vdc_options, 
                 index=None, 
                 placeholder=t['select_placeholder']
@@ -202,7 +202,7 @@ def main():
             # Show only wards for this VDC
             ward_options = sorted(filtered_df[col_ward].dropna().unique().tolist())
             selected_ward = st.sidebar.selectbox(
-                f"{col_ward}", 
+                t['ward'], 
                 ward_options, 
                 index=None, 
                 placeholder=t['select_placeholder']
