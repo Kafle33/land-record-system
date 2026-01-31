@@ -21,7 +21,7 @@ ERROR_MSG_CONNECTION = "तथ्याङ्क लोड गर्न सक�
 SUCCESS_MSG_LOADED = "तथ्याङ्क सफलतापूर्वक लोड भयो!"
 
 # Function to load data
-@st.cache_data(ttl=600)
+@st.cache_data(ttl=600, show_spinner=False)
 def load_data():
     try:
         response = requests.get(DATA_URL)
@@ -37,7 +37,8 @@ def main():
     st.title(HEADER_TITLE)
 
     # Load data
-    df = load_data()
+    with st.spinner("तथ्याङ्क लोड हुँदैछ..."):
+        df = load_data()
 
     if df is not None:
         # Normalize column names to strip spaces if any
