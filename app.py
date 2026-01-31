@@ -72,39 +72,53 @@ def main():
         # Create dynamic filters
         filtered_df = df.copy()
 
-        # VDC Filter
+        # 1. Plot Filter (Moved to Top)
+        if col_plot in available_columns:
+            # User requested text input for Kit/Plot number (unique ID)
+            selected_plot = st.sidebar.text_input(f"{col_plot}")
+            if selected_plot:
+                 # Convert column to string for comparison to handle potential mixed types
+                 # Strip whitespace to be safe
+                filtered_df = filtered_df[filtered_df[col_plot].astype(str) == selected_plot.strip()]
+
+        # 2. VDC Filter
         if col_vdc in available_columns:
-            vdc_options = ['सबै (All)'] + sorted(df[col_vdc].dropna().unique().tolist())
-            selected_vdc = st.sidebar.selectbox(f"{col_vdc}", vdc_options)
-            if selected_vdc != 'सबै (All)':
+            # Use index=None to default to empty
+            vdc_options = sorted(df[col_vdc].dropna().unique().tolist())
+            selected_vdc = st.sidebar.selectbox(
+                f"{col_vdc}", 
+                vdc_options, 
+                index=None, 
+                placeholder="छान्नुहोस् (Select)"
+            )
+            if selected_vdc:
                 filtered_df = filtered_df[filtered_df[col_vdc] == selected_vdc]
         
-        # Ward Filter based on VDC selection
+        # 3. Ward Filter based on VDC selection
         if col_ward in available_columns:
             # Update options based on current filtered data
-            ward_options = ['सबै (All)'] + sorted(filtered_df[col_ward].dropna().unique().tolist())
-            selected_ward = st.sidebar.selectbox(f"{col_ward}", ward_options)
-            if selected_ward != 'सबै (All)':
+            ward_options = sorted(filtered_df[col_ward].dropna().unique().tolist())
+            selected_ward = st.sidebar.selectbox(
+                f"{col_ward}", 
+                ward_options, 
+                index=None, 
+                placeholder="छान्नुहोस् (Select)"
+            )
+            if selected_ward:
                 filtered_df = filtered_df[filtered_df[col_ward] == selected_ward]
 
-        # Plot Filter
-        if col_plot in available_columns:
-            plot_options = ['सबै (All)'] + sorted(filtered_df[col_plot].dropna().unique().astype(str).tolist())
-            selected_plot = st.sidebar.selectbox(f"{col_plot}", plot_options)
-            if selected_plot != 'सबै (All)':
-                 # Convert column to string for comparison to handle potential mixed types
-                filtered_df = filtered_df[filtered_df[col_plot].astype(str) == selected_plot]
-
-        # Land Use Filter
-        if col_land_use in available_columns:
-            land_use_options = ['सबै (All)'] + sorted(filtered_df[col_land_use].dropna().unique().tolist())
-            selected_land_use = st.sidebar.selectbox(f"{col_land_use}", land_use_options)
-            if selected_land_use != 'सबै (All)':
-                filtered_df = filtered_df[filtered_df[col_land_use] == selected_land_use]
+        # Land Use Filter removed as per user request (it is an output field)
         
+        # Reorder Columns for Display
+        # Move Kit Number, VDC, Ward to the front
+        priority_cols = [c for c in [col_plot, col_vdc, col_ward] if c in filtered_df.columns]
+        other_cols = [c for c in filtered_df.columns if c not in priority_cols]
+        final_cols = priority_cols + other_cols
+        filtered_df = filtered_df[final_cols]
+
         # Display data
         st.write(f"जम्मा नतिजा (Total Results): {len(filtered_df)}")
-        st.dataframe(filtered_df, use_container_width=True)
+        st.dataframe(filtered_df, use_container_width=True, hide_index=True)
         
         # Debugging: Show all columns if expected ones aren't found
         missing_cols = [c for c in [col_vdc, col_ward, col_plot, col_land_use] if c not in available_columns]
