@@ -232,8 +232,6 @@ def main():
             )
             if selected_ward:
                 filtered_df = filtered_df[filtered_df[col_ward] == selected_ward]
-
-        # No filter for Land Use. User said remove.
         
         # Put important columns first
         # Kit Number, VDC, Ward goes to front
