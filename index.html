@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <title>Land Record Search System</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@stlite/mountable@0.31.0/build/stlite.css">
+  </head>
+  <body>
+    <div id="root"></div>
+    <script src="https://cdn.jsdelivr.net/npm/@stlite/mountable@0.31.0/build/stlite.js"></script>
+    <script>
+      fetch("./app.py")
+        .then((response) => response.text())
+        .then((mainScript) => {
+          stlite.mount({
+            requirements: ["streamlit", "pandas"],
+            entrypoint: "app.py",
+            files: {
+              "app.py": mainScript,
+            },
+            streamlitConfig: {
+                "server.runOnSave": true,
+                "theme.base": "light",
+                "theme.primaryColor": "#ff4b4b",
+                "theme.backgroundColor": "#ffffff",
+                "theme.secondaryBackgroundColor": "#f0f2f6",
+                "theme.textColor": "#31333f",
+                "theme.font": "sans serif"
+            }
+          }, document.getElementById("root"));
+        })
+        .catch((error) => {
+            console.error("Error loading app.py:", error);
+            document.getElementById("root").innerHTML = "<h1>Error loading application</h1><p>Please check the console for details.</p>";
+        });
+    </script>
+  </body>
+</html>
