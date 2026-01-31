@@ -151,7 +151,12 @@ def main():
         
         /* Selected option in dropdown */
         div[data-baseweb="select"] [aria-selected="true"] {{
-            background-color: {text_color}30 !important;
+            background-color: #4CAF50 !important;
+            color: #FFFFFF !important;
+        }}
+        
+        /* Currently displayed value in dropdown input */
+        div[data-baseweb="select"] input {{
             color: {text_color} !important;
         }}
         
@@ -163,15 +168,41 @@ def main():
         /* DataFrame/Table text visibility */
         div[data-testid="stDataFrame"] {{
             color: {text_color} !important;
+            background-color: {bg_color} !important;
         }}
         
         div[data-testid="stDataFrame"] table {{
             color: {text_color} !important;
+            background-color: {bg_color} !important;
         }}
         
         div[data-testid="stDataFrame"] th,
         div[data-testid="stDataFrame"] td {{
             color: {text_color} !important;
+            background-color: {bg_color} !important;
+        }}
+        
+        /* Force table container backgrounds */
+        div[data-testid="stDataFrame"] > div {{
+            background-color: {bg_color} !important;
+        }}
+        
+        /* Table header row */
+        div[data-testid="stDataFrame"] thead {{
+            background-color: {bg_color} !important;
+        }}
+        
+        div[data-testid="stDataFrame"] thead th {{
+            background-color: {bg_color} !important;
+            color: {text_color} !important;
+        }}
+        
+        /* Table body */
+        div[data-testid="stDataFrame"] tbody {{
+            background-color: {bg_color} !important;
+        }}
+        
+        div[data-testid="stDataFrame"] tbody tr {{
             background-color: {bg_color} !important;
         }}
         
