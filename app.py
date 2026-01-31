@@ -441,20 +441,6 @@ def main():
         # Make filters work
         filtered_df = df.copy()
 
-        # 1. Filter for Plot (First one)
-        if col_plot in available_columns:
-            # User want type to search. We make list of all plots.
-            # Make sure all are text.
-            plot_options = sorted(df[col_plot].dropna().unique().astype(str).tolist())
-            selected_plot = st.sidebar.selectbox(
-                t['kit_number'], 
-                plot_options,
-                index=None,
-                placeholder=t['select_placeholder']
-            )
-            if selected_plot:
-                 # Check if text match plot name
-                filtered_df = filtered_df[filtered_df[col_plot].astype(str) == selected_plot]
 
         # 2. Filter for VDC
         if col_vdc in available_columns:
@@ -481,6 +467,21 @@ def main():
             )
             if selected_ward:
                 filtered_df = filtered_df[filtered_df[col_ward] == selected_ward]
+        
+        # 1. Filter for Plot (First one)
+        if col_plot in available_columns:
+            # User want type to search. We make list of all plots.
+            # Make sure all are text.
+            plot_options = sorted(df[col_plot].dropna().unique().astype(str).tolist())
+            selected_plot = st.sidebar.selectbox(
+                t['kit_number'], 
+                plot_options,
+                index=None,
+                placeholder=t['select_placeholder']
+            )
+            if selected_plot:
+                 # Check if text match plot name
+                filtered_df = filtered_df[filtered_df[col_plot].astype(str) == selected_plot]
         
         # Put important columns first
         # Kit Number, VDC, Ward goes to front
