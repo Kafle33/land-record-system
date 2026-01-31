@@ -221,7 +221,7 @@ def main():
 
         # Show the table
         st.write(f"जम्मा नतिजा (Total Results): {len(filtered_df)}")
-        st.dataframe(filtered_df, use_container_width=True, hide_index=True)
+        st.dataframe(filtered_df, use_container_width=True, hide_index=True, height=640)
         
         # Help fix if columns missing
         missing_cols = [c for c in [col_vdc, col_ward, col_plot, col_land_use] if c not in available_columns]
