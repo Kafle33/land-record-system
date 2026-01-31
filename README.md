@@ -16,15 +16,23 @@ Use this method to test changes before sharing them.
 ### Step 1: Install Python
 Make sure you have Python installed. You can check by typing `python --version` in your terminal.
 
-### Step 2: Install Requirements
-Open your terminal in this folder and run:
-```bash
-pip install -r requirements.txt
-```
-*What this does:* It downloads `streamlit` (the website builder) and `pandas` (the data handler) to your computer.
+### Step 2: Setup Virtual Environment
+Linux systems usually prevent installing packages globally. Use a virtual environment:
+
+1. **Activate the environment**:
+   ```bash
+   source venv/bin/activate
+   ```
+   *(You should see `(venv)` at the start of your command line)*
+
+2. **Install Requirements**:
+   ```bash
+   pip install -r requirements.txt
+   ```
+   *What this does:* It downloads `streamlit` and `pandas` into your isolated `venv` folder.
 
 ### Step 3: Run the App
-Run this command:
+With the environment activated:
 ```bash
 streamlit run app.py
 ```
