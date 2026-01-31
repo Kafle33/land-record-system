@@ -10,83 +10,9 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS for UI Animations
-st.markdown("""
-    <style>
-        /* Global Fade In */
-        .stApp {
-            animation: fadeIn 0.8s ease-in-out;
-        }
-        @keyframes fadeIn {
-            0% { opacity: 0; }
-            100% { opacity: 1; }
-        }
 
-        /* Smooth Sidebar Transition ("Well") */
-        section[data-testid="stSidebar"] {
-            transition: all 0.5s ease;
-        }
+    
 
-        /* Smooth Transitions for Buttons */
-        div.stButton > button {
-            transition: all 0.3s ease !important;
-            border-radius: 8px !important;
-        }
-        div.stButton > button:hover {
-            transform: scale(1.02);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-
-        /* Dropdown & Input Animation */
-        div[data-baseweb="select"] > div,
-        div[data-baseweb="input"] > div {
-            transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease !important;
-        }
-        div[data-baseweb="select"]:hover,
-        div[data-baseweb="input"]:hover {
-            transform: translateY(-1px);
-        }
-        
-        /* Dropdown Menu Items (Popovers) */
-        li[data-baseweb="menu-item"], div[data-baseweb="menu-item"] {
-            transition: background-color 0.2s ease !important;
-        }
-
-        /* DataFrame/Table styling - Subtler, Faster Animation for "Reflow" feel */
-        div[data-testid="stDataFrame"] {
-            transition: opacity 0.3s ease;
-            animation: slideUp 0.4s ease-out;
-        }
-        @keyframes slideUp {
-            0% { transform: translateY(10px); opacity: 0; }
-            100% { transform: translateY(0); opacity: 1; }
-        }
-        
-        /* Metric/Card hover effects */
-        div[data-testid="metric-container"] {
-            transition: transform 0.2s ease;
-        }
-        div[data-testid="metric-container"]:hover {
-            transform: translateY(-2px);
-        }
-
-        /* Smooth Text Transitions for Language Change */
-        /* Using animation instead of transition to catch the re-render text swap */
-        h1, h2, h3, h4, h5, h6, p, label, .stMarkdown, .stButton button, .stSelectbox label {
-            animation: textFadeIn 0.5s ease-in-out;
-        }
-        
-        @keyframes textFadeIn {
-            0% { opacity: 0; }
-            100% { opacity: 1; }
-        }
-        
-        /* Smooth transition for the whole sidebar */
-        section[data-testid="stSidebar"] > div {
-             transition: all 0.5s ease-in-out;
-        }
-    </style>
-""", unsafe_allow_html=True)
 
 # Fixed values
 DATA_URL = "https://docs.google.com/spreadsheets/d/1YQmkQzvpoFUBxXLuc9QWsgRqmRn3YZOBED6UmCuqsXk/export?format=csv"
@@ -144,6 +70,87 @@ def main():
     lang_choice = st.sidebar.radio("भाषा (Language)", options=["नेपाली", "English"], horizontal=True)
     lang_code = 'NP' if lang_choice == "नेपाली" else 'EN'
     t = TRANSLATIONS[lang_code]
+
+    # Dynamic animation name to force re-triggering on language change
+    anim_name = f"textFadeIn_{lang_code}"
+
+    # Custom CSS for UI Animations
+    st.markdown(f"""
+    <style>
+        /* Global Fade In */
+        .stApp {{
+            animation: fadeIn 0.8s ease-in-out;
+        }}
+        @keyframes fadeIn {{
+            0% {{ opacity: 0; }}
+            100% {{ opacity: 1; }}
+        }}
+
+        /* Smooth Sidebar Transition ("Well") */
+        section[data-testid="stSidebar"] {{
+            transition: all 0.5s ease;
+        }}
+
+        /* Smooth Transitions for Buttons */
+        div.stButton > button {{
+            transition: all 0.3s ease !important;
+            border-radius: 8px !important;
+        }}
+        div.stButton > button:hover {{
+            transform: scale(1.02);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }}
+
+        /* Dropdown & Input Animation */
+        div[data-baseweb="select"] > div,
+        div[data-baseweb="input"] > div {{
+            transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease !important;
+        }}
+        div[data-baseweb="select"]:hover,
+        div[data-baseweb="input"]:hover {{
+            transform: translateY(-1px);
+        }}
+
+        /* Dropdown Menu Items (Popovers) */
+        li[data-baseweb="menu-item"], div[data-baseweb="menu-item"] {{
+            transition: background-color 0.2s ease !important;
+        }}
+
+        /* DataFrame/Table styling - Subtler, Faster Animation for "Reflow" feel */
+        div[data-testid="stDataFrame"] {{
+            transition: opacity 0.3s ease;
+            animation: slideUp 0.4s ease-out;
+        }}
+        @keyframes slideUp {{
+            0% {{ transform: translateY(10px); opacity: 0; }}
+            100% {{ transform: translateY(0); opacity: 1; }}
+        }}
+
+        /* Metric/Card hover effects */
+        div[data-testid="metric-container"] {{
+            transition: transform 0.2s ease;
+        }}
+        div[data-testid="metric-container"]:hover {{
+            transform: translateY(-2px);
+        }}
+
+        /* Smooth Text Transitions for Language Change */
+        /* We change the animation name based on language to FORCE it to replay */
+        h1, h2, h3, h4, h5, h6, p, label, .stMarkdown, .stButton button, div[data-baseweb="select"] div, span {{
+            animation: {anim_name} 0.6s ease-in-out;
+        }}
+
+        @keyframes {anim_name} {{
+            0% {{ opacity: 0; }}
+            100% {{ opacity: 1; }}
+        }}
+
+        /* Smooth transition for the whole sidebar */
+        section[data-testid="stSidebar"] > div {{
+             transition: all 0.5s ease-in-out;
+        }}
+    </style>
+""", unsafe_allow_html=True)
 
     st.title(t['header_title'])
 
