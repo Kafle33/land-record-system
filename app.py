@@ -10,8 +10,9 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-
-    
+# Initialize theme state
+if 'dark_mode' not in st.session_state:
+    st.session_state.dark_mode = True
 
 
 # Fixed values
@@ -73,22 +74,231 @@ def main():
 
     # Dynamic animation name to force re-triggering on language change
     anim_name = f"textFadeIn_{lang_code}"
+    
+    # Define theme colors based on state
+    if st.session_state.dark_mode:
+        bg_color = "#0E1117"
+        sidebar_bg = "#262730"
+        text_color = "#FAFAFA"
+        input_bg = "#2C2F36"
+        card_bg = "#1E1E1E"
+    else:
+        bg_color = "#FFFFFF"
+        sidebar_bg = "#F0F2F6"
+        text_color = "#31333F"
+        input_bg = "#FFFFFF"
+        card_bg = "#FFFFFF"
 
-    # Custom CSS for UI Animations
+    # Custom CSS for UI Animations & Theme Toggle
     st.markdown(f"""
     <style>
-        /* Global Fade In */
+        /* Theme Colors */
         .stApp {{
+            background-color: {bg_color};
+            color: {text_color};
             animation: fadeIn 0.8s ease-in-out;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }}
+        
         @keyframes fadeIn {{
             0% {{ opacity: 0; }}
             100% {{ opacity: 1; }}
         }}
-
-        /* Smooth Sidebar Transition ("Well") */
+        
         section[data-testid="stSidebar"] {{
-            transition: all 0.5s ease;
+            background-color: {sidebar_bg};
+            transition: all 0.3s ease;
+        }}
+        
+        /* Text colors - comprehensive coverage */
+        h1, h2, h3, h4, h5, h6, p, span, label, div, li, a {{
+            color: {text_color} !important;
+        }}
+        
+        /* Ensure markdown text is visible */
+        .stMarkdown, .stMarkdown p, .stMarkdown span {{
+            color: {text_color} !important;
+        }}
+        
+        /* Input fields - background and text */
+        div[data-baseweb="select"] > div,
+        div[data-baseweb="input"] > div {{
+            background-color: {input_bg} !important;
+            color: {text_color} !important;
+            transition: background-color 0.3s ease;
+            border-color: {text_color}40 !important;
+        }}
+        
+        /* Dropdown menu items */
+        div[data-baseweb="select"] ul {{
+            background-color: {input_bg} !important;
+        }}
+        
+        div[data-baseweb="select"] li {{
+            background-color: {input_bg} !important;
+            color: {text_color} !important;
+            opacity: 1 !important;
+        }}
+        
+        div[data-baseweb="select"] li span {{
+            color: {text_color} !important;
+            opacity: 1 !important;
+        }}
+        
+        div[data-baseweb="select"] li:hover {{
+            background-color: {text_color}20 !important;
+        }}
+        
+        /* Selected option in dropdown */
+        div[data-baseweb="select"] [aria-selected="true"] {{
+            background-color: {text_color}30 !important;
+            color: {text_color} !important;
+        }}
+        
+        /* Input placeholder text */
+        input::placeholder, textarea::placeholder {{
+            color: {text_color}60 !important;
+        }}
+        
+        /* DataFrame/Table text visibility */
+        div[data-testid="stDataFrame"] {{
+            color: {text_color} !important;
+        }}
+        
+        div[data-testid="stDataFrame"] table {{
+            color: {text_color} !important;
+        }}
+        
+        div[data-testid="stDataFrame"] th,
+        div[data-testid="stDataFrame"] td {{
+            color: {text_color} !important;
+            background-color: {bg_color} !important;
+        }}
+        
+        /* Warning and info boxes */
+        .stAlert {{
+            background-color: {card_bg} !important;
+            color: {text_color} !important;
+        }}
+        
+        /* Radio button labels */
+        div[role="radiogroup"] label {{
+            color: {text_color} !important;
+        }}
+        
+        /* Ensure button text is always visible */
+        button {{
+            color: white !important;
+        }}
+        
+        /* Tooltip text - make it darker in light mode */
+        div[data-baseweb="tooltip"] {{
+            color: #000000 !important;
+            opacity: 1 !important;
+        }}
+        
+        div[data-baseweb="tooltip"] * {{
+            color: #000000 !important;
+            opacity: 1 !important;
+        }}
+        
+        /* Sidebar text elements */
+        section[data-testid="stSidebar"] * {{
+            color: {text_color} !important;
+        }}
+        
+        /* Toggle Switch Container - Top Right */
+        .theme-toggle-container {{
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 999999;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }}
+        
+        /* Toggle Switch */
+        .theme-switch {{
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+        }}
+        
+        .theme-switch input {{
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }}
+        
+        .slider {{
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: 0.3s;
+            border-radius: 30px;
+        }}
+        
+        .slider:before {{
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: 0.3s;
+            border-radius: 50%;
+        }}
+        
+        input:checked + .slider {{
+            background-color: #2196F3;
+        }}
+        
+        input:checked + .slider:before {{
+            transform: translateX(30px);
+        }}
+        
+        /* Icons in toggle */
+        .slider:after {{
+            content: '☀️';
+            position: absolute;
+            left: 8px;
+            top: 4px;
+            font-size: 16px;
+        }}
+        
+        input:checked + .slider:after {{
+            content: '🌙';
+            left: auto;
+            right: 8px;
+        }}
+        
+        /* Style the theme toggle button */
+        button[key="theme_toggle"] {{
+            position: fixed !important;
+            top: 10px !important;
+            right: 10px !important;
+            z-index: 999999 !important;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            border: none !important;
+            border-radius: 50px !important;
+            width: 50px !important;
+            height: 50px !important;
+            font-size: 24px !important;
+            cursor: pointer !important;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2) !important;
+            transition: all 0.3s ease !important;
+        }}
+        
+        button[key="theme_toggle"]:hover {{
+            transform: scale(1.1) !important;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3) !important;
         }}
 
         /* Smooth Transitions for Buttons */
@@ -151,6 +361,14 @@ def main():
         }}
     </style>
 """, unsafe_allow_html=True)
+
+    # Theme Toggle Button - Top Right Corner
+    col1, col2 = st.columns([6, 1])
+    with col2:
+        theme_icon = "🌙" if not st.session_state.dark_mode else "☀️"
+        if st.button(theme_icon, key="theme_toggle", help="Toggle Dark/Light Mode"):
+            st.session_state.dark_mode = not st.session_state.dark_mode
+            st.rerun()
 
     st.title(t['header_title'])
 
