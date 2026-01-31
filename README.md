@@ -51,19 +51,32 @@ docker build -t land-record .
 docker run -p 8501:8501 land-record
 ```
 
-### 3. Static Hosting on GitHub Pages (Experimental)
-This project includes an `index.html` that uses **Stlite** (Streamlit for WebAssembly) to run Python code directly in the browser. 
 
-> [!NOTE]
-> GitHub Pages is **static hosting**. It does not run Docker or a real Python server. It uses your browser's CPU to run the code. For "Enterprise" or heavy use, the Dockerized method above is preferred on a dedicated server.
+### 3. Deploy to GitHub Pages (Free & Easy)
+You can deploy this directly to GitHub Pages using **Stlite**. This allows the app to run entirely in the browser (Client-side) without a backend server.
 
-#### GitHub Pages Setup:
-1.  **Create a GitHub Repository**: (e.g., `land-record-system`).
-2.  **Upload Files**: Push all files to the `main` branch.
-3.  **Enable GitHub Pages**: **Settings** > **Pages** > **Source: Deploy from branch** > **Save**.
-4.  **Access**: `https://<your-username>.github.io/<repo-name>/`.
+**How it works:**
+The `index.html` file loads a lightweight runtime (Stlite) that executes your `app.py` directly in the user's browser using WebAssembly.
 
-### 4. Deploy to Streamlit Community Cloud (Recommended for Production)
+#### Step-by-Step Deployment Guide:
+1.  **Create a Repository**:
+    - Go to GitHub and create a new public repository (e.g., `land-record-system`).
+2.  **Upload Files**:
+    - Push the following files to your repository's `main` branch:
+        - `app.py`
+        - `index.html` (Required for Stlite)
+        - `requirements.txt`
+3.  **Enable GitHub Pages**:
+    - Go to your repository's **Settings** tab.
+    - Click **Pages** in the left sidebar.
+    - Under **Source**, select **"Deploy from a branch"**.
+    - Verify that **Branch** is set to `main` and folder is `/(root)`.
+    - Click **Save**.
+4.  **Wait & Visit**:
+    - Wait about 1-2 minutes for the "GitHub Actions" deployment to finish.
+    - Refresh the Pages settings page to see your live URL (e.g., `https://yourname.github.io/land-record-system/`).
+
+### 4. Deploy to Streamlit Community Cloud (Alternative)
 For the most stable and performant experience with a real Python backend:
 1.  Push your code to a GitHub repository.
 2.  Go to [share.streamlit.io](https://share.streamlit.io/).
