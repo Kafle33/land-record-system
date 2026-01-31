@@ -49,7 +49,10 @@ def main():
         # Fresh Data Refresh Button
         if st.sidebar.button(REFRESH_BUTTON_LABEL, type="primary", use_container_width=True):
             st.cache_data.clear()
-            st.rerun()
+            try:
+                st.rerun()
+            except AttributeError:
+                st.experimental_rerun()
 
         st.sidebar.divider()
         # 'साविक गा.' (VDC), 'वडा नं.' (Ward), 'कित्ता नं.' (Plot), 'भूउपयोग क्षेत्र' (Land Use)

@@ -61,7 +61,17 @@ This project uses **Stlite** (Streamlit for WebAssembly) to run Python code dire
 5.  **Access Your Site**:
     - Once finished, your site will be live at `https://<your-username>.github.io/<repo-name>/`.
 
-> **Note**: The `index.html` file acts as the entry point. It loads `stlite`, which then reads your `app.py` and runs it using WebAssembly. There is no cost for hosting and it works instantly!
+### 4. Deploy to Streamlit Community Cloud (Recommended for Production)
+For the most stable and performant experience with a real Python backend:
+1.  Push your code to a GitHub repository.
+2.  Go to [share.streamlit.io](https://share.streamlit.io/).
+3.  Connect your GitHub account and select your repository and `app.py`.
+4.  Click **Deploy**. This provides a custom URL and better performance than WebAssembly.
+
+## Troubleshooting
+If you encounter `AttributeError: module 'streamlit' has no attribute 'rerun'` in older environments:
+- This is now handled automatically in `app.py` with a fallback to `st.experimental_rerun()`.
+- Ensure your `index.html` uses the latest Stlite version (currently `0.76.3`).
 
 ## Data Source
 The application pulls data from a public Google Sheet:
