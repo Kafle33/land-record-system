@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import io
 import requests
+import base64
 
 # Set page settings
 st.set_page_config(
@@ -63,6 +64,14 @@ def load_data():
         return df
     except Exception as e:
         st.error(f"{ERROR_MSG_CONNECTION}: {e}")
+        return None
+
+# Helper to encode image for robust HTML display
+def get_image_base64(path):
+    try:
+        with open(path, "rb") as image_file:
+            return base64.b64encode(image_file.read()).decode()
+    except Exception:
         return None
 
 def main():
@@ -390,8 +399,78 @@ def main():
         section[data-testid="stSidebar"] > div {{
              transition: all 0.5s ease-in-out;
         }}
+
+        /* Header Image Styling */
+        [data-testid="stHeader"] {{
+            background: rgba(0,0,0,0);
+        }}
+        .block-container {{
+            padding-top: 1rem !important;
+        }}
+        /* Header Image Styling - Final Centering Attempt */
+        .header-wrapper {{
+            text-align: center !important;
+            width: 100% !important;
+            margin-top: -4.5rem !important;
+            margin-bottom: 0.5rem !important;
+            display: block !important;
+        }}
+        
+        /* Force the Streamlit image container to be inline-block so it centers via text-align */
+        .header-wrapper [data-testid="stImage"] {{
+            display: inline-block !important;
+            margin: 0 auto !important;
+        }}
+
+        .header-wrapper img {{
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            max-height: 160px !important;
+            width: auto !important;
+            object-fit: contain;
+        }}
+
+        /* Adjust main title margin and centering */
+        .main-title {{
+            margin-top: 0.5rem !important;
+            text-align: center;
+            width: 100%;
+        }}
+        
+        .header-container-final {{
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
+            width: 100% !important;
+            margin-top: -1.5rem !important; /* Moved down from -4.5rem */
+            margin-bottom: 0.5rem !important;
+        }}
+        
+        .header-img-final {{
+            width: 500px !important;
+            max-height: 160px !important;
+            object-fit: contain;
+            border-radius: 0 !important; /* Removed rounded corners */
+            box-shadow: none !important; /* Removed shadow */
+        }}
     </style>
 """, unsafe_allow_html=True)
+
+
+    # Display Header Image using direct HTML for perfect centering
+    header_base64 = get_image_base64("static/header.jpeg")
+    if header_base64:
+        st.markdown(
+            f'''
+            <div class="header-container-final">
+                <img src="data:image/jpeg;base64,{header_base64}" class="header-img-final">
+            </div>
+            ''',
+            unsafe_allow_html=True
+        )
+    else:
+        # Fallback if file not found
+        st.image("static/header.jpeg", width=500)
 
     # Theme Toggle Button - Top Right Corner
     col1, col2 = st.columns([6, 1])
@@ -401,7 +480,7 @@ def main():
             st.session_state.dark_mode = not st.session_state.dark_mode
             st.rerun()
 
-    st.title(t['header_title'])
+    st.markdown(f'<h1 class="main-title">{t["header_title"]}</h1>', unsafe_allow_html=True)
 
     # Get the data now
     with st.spinner(t['loading_msg']):
@@ -492,7 +571,7 @@ def main():
 
         # Show the table
         st.write(f"जम्मा नतिजा (Total Results): {len(filtered_df)}")
-        st.dataframe(filtered_df, use_container_width=True, hide_index=True, height=640)
+        st.dataframe(filtered_df, use_container_width=True, hide_index=True, height=520)
         
         # Help fix if columns missing
         missing_cols = [c for c in [col_vdc, col_ward, col_plot, col_land_use] if c not in available_columns]
