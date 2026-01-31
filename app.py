@@ -69,6 +69,16 @@ st.markdown("""
         div[data-testid="metric-container"]:hover {
             transform: translateY(-2px);
         }
+
+        /* Smooth Text Transitions for Language Change */
+        h1, h2, h3, h4, h5, h6, p, label, span, div.stMarkdown {
+            transition: all 0.5s ease-in-out !important;
+        }
+        
+        /* Smooth transition for the whole sidebar */
+        section[data-testid="stSidebar"] > div {
+             transition: all 0.5s ease-in-out;
+        }
     </style>
 """, unsafe_allow_html=True)
 
