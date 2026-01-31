@@ -71,8 +71,14 @@ st.markdown("""
         }
 
         /* Smooth Text Transitions for Language Change */
-        h1, h2, h3, h4, h5, h6, p, label, span, div.stMarkdown {
-            transition: all 0.5s ease-in-out !important;
+        /* Using animation instead of transition to catch the re-render text swap */
+        h1, h2, h3, h4, h5, h6, p, label, .stMarkdown, .stButton button, .stSelectbox label {
+            animation: textFadeIn 0.5s ease-in-out;
+        }
+        
+        @keyframes textFadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
         }
         
         /* Smooth transition for the whole sidebar */
