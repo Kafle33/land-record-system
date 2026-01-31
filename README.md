@@ -1,93 +1,60 @@
 # Land Record Search System (भू-उपयोग क्षेत्र वर्गीकरण खोज प्रणाली)
 
-A browser-based Land Record Search System for Nepal built with Python (Streamlit) and Pandas.
+A simple tool to search land records in Nepal. It connects to a Google Sheet and lets you filter data by VDC, Ward, Plot, and Land Use type.
 
-## Features
-- **Dynamic Filtering**: Filter by 'साविक गा.' (VDC), 'वडा नं.' (Ward), 'कित्ता नं.' (Plot), and 'भूउपयोग क्षेत्र' (Land Use).
-- **Localization**: Full Nepali language support (Unicode).
-- **Live Data**: Connects directly to Google Sheets CSV.
-- **Cross-Platform**: Runs locally, via Docker, or directly in the browser (GitHub Pages/Stlite).
+## 📂 Project Files Explained
+- **`app.py`**: The "Brain" of the project. It contains all the Python code that fetches data and creates the website.
+- **`requirements.txt`**: The "Shopping List". It tells your computer which Python tools (libraries) are needed to run the app.
+- **`index.html`**: The "Magic Ticket" for GitHub Pages. It lets this Python app run directly in a web browser without a server.
 
-## Project Structure
-```
-land_record_system/
-├── app.py              # Main application logic
-├── requirements.txt    # Python dependencies
-├── Dockerfile          # Container configuration
-├── index.html          # Browser-based runner (Stlite)
-└── README.md           # Documentation
-```
+---
 
-## How to Run
+## 🚀 How to Run Locally (On Your Computer)
 
-### 1. Run Locally (Python)
-Ensure you have Python 3.9+ installed.
+Use this method to test changes before sharing them.
 
+### Step 1: Install Python
+Make sure you have Python installed. You can check by typing `python --version` in your terminal.
+
+### Step 2: Install Requirements
+Open your terminal in this folder and run:
 ```bash
-# Install dependencies
 pip install -r requirements.txt
+```
+*What this does:* It downloads `streamlit` (the website builder) and `pandas` (the data handler) to your computer.
 
-# Run the app
+### Step 3: Run the App
+Run this command:
+```bash
 streamlit run app.py
 ```
-Open [http://localhost:8501](http://localhost:8501) in your browser.
+*What this does:* It starts a local web server on your machine. A tab should automatically open in your browser at `http://localhost:8501`.
 
-### 2. Run with Docker (Recommended for Stability)
-For a robust production environment, use Docker. This keeps the application logic running on a stable Python backend.
+---
 
-#### Using Docker Compose:
-```bash
-# Build and start the container
-docker-compose up -d
-```
-Access the app at `http://localhost:8501`.
+## 🌐 How to Deploy to the Web (Free)
 
-#### Using Docker CLI:
-```bash
-# Build the image
-docker build -t land-record .
+You can put this on the internet for free using **GitHub Pages**.
 
-# Run the container
-docker run -p 8501:8501 land-record
-```
+### Step 1: Create a GitHub Repository
+1. Go to [github.com](https://github.com) and create a new repository.
+2. Name it something like `land-record-system`.
 
+### Step 2: Upload Files
+Upload these 3 files to your new repository:
+- `app.py`
+- `requirements.txt`
+- `index.html`
 
-### 3. Deploy to GitHub Pages (Free & Easy)
-You can deploy this directly to GitHub Pages using **Stlite**. This allows the app to run entirely in the browser (Client-side) without a backend server.
+### Step 3: Enable GitHub Pages
+1. Go to your repository's **Settings**.
+2. Click **Pages** on the left sidebar.
+3. Under **Branch**, select `main` (or `master`) and click **Save**.
 
-**How it works:**
-The `index.html` file loads a lightweight runtime (Stlite) that executes your `app.py` directly in the user's browser using WebAssembly.
+**That's it!** Wait about 1-2 minutes. GitHub will verify `index.html` and give you a website link (e.g., `https://yourname.github.io/land-record-system/`).
 
-#### Step-by-Step Deployment Guide:
-1.  **Create a Repository**:
-    - Go to GitHub and create a new public repository (e.g., `land-record-system`).
-2.  **Upload Files**:
-    - Push the following files to your repository's `main` branch:
-        - `app.py`
-        - `index.html` (Required for Stlite)
-        - `requirements.txt`
-3.  **Enable GitHub Pages**:
-    - Go to your repository's **Settings** tab.
-    - Click **Pages** in the left sidebar.
-    - Under **Source**, select **"Deploy from a branch"**.
-    - Verify that **Branch** is set to `main` and folder is `/(root)`.
-    - Click **Save**.
-4.  **Wait & Visit**:
-    - Wait about 1-2 minutes for the "GitHub Actions" deployment to finish.
-    - Refresh the Pages settings page to see your live URL (e.g., `https://yourname.github.io/land-record-system/`).
+---
 
-### 4. Deploy to Streamlit Community Cloud (Alternative)
-For the most stable and performant experience with a real Python backend:
-1.  Push your code to a GitHub repository.
-2.  Go to [share.streamlit.io](https://share.streamlit.io/).
-3.  Connect your GitHub account and select your repository and `app.py`.
-4.  Click **Deploy**. This provides a custom URL and better performance than WebAssembly.
-
-## Troubleshooting
-If you encounter `AttributeError: module 'streamlit' has no attribute 'rerun'` in older environments:
-- This is now handled automatically in `app.py` with a fallback to `st.experimental_rerun()`.
-- Ensure your `index.html` uses the latest Stlite version (currently `0.76.3`).
-
-## Data Source
-The application pulls data from a public Google Sheet:
-[CSV Export Link](https://docs.google.com/spreadsheets/d/1YQmkQzvpoFUBxXLuc9QWsgRqmRn3YZOBED6UmCuqsXk/export?format=csv)
+## 📊 Data Source
+This app pulls live data from this Google Sheet:
+[View Data Source](https://docs.google.com/spreadsheets/d/1YQmkQzvpoFUBxXLuc9QWsgRqmRn3YZOBED6UmCuqsXk/export?format=csv)
