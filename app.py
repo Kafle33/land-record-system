@@ -13,12 +13,39 @@ st.set_page_config(
 # Constants
 DATA_URL = "https://docs.google.com/spreadsheets/d/1YQmkQzvpoFUBxXLuc9QWsgRqmRn3YZOBED6UmCuqsXk/export?format=csv"
 
-# Localization
-HEADER_TITLE = "भू-उपयोग क्षेत्र वर्गीकरण खोज प्रणाली"
-SIDEBAR_TITLE = "फिल्टरहरू र नियन्त्रणहरू (Filters & Controls)"
-REFRESH_BUTTON_LABEL = "डाटा रिफ्रेस गर्नुहोस् (Refresh Data)"
-ERROR_MSG_CONNECTION = "तथ्याङ्क लोड गर्न सकिएन। कृपया इन्टरनेट जडान जाँच गर्नुहोस् वा पुनः प्रयास गर्नुहोस्।"
-SUCCESS_MSG_LOADED = "तथ्याङ्क सफलतापूर्वक लोड भयो!"
+# Localization Dictionary
+TRANSLATIONS = {
+    'NP': {
+        'header_title': "भू-उपयोग क्षेत्र वर्गीकरण खोज प्रणाली",
+        'sidebar_title': "फिल्टरहरू र नियन्त्रणहरू",
+        'refresh_button': "डाटा रिफ्रेस गर्नुहोस्",
+        'loading_msg': "तथ्याङ्क लोड हुँदैछ...",
+        'connection_error': "तथ्याङ्क लोड गर्न सकिएन। कृपया इन्टरनेट जडान जाँच गर्नुहोस् वा पुनः प्रयास गर्नुहोस्।",
+        'total_results': "जम्मा नतिजा",
+        'kit_number': "कित्ता नं.",
+        'vdc': "साविक गा.",
+        'ward': "वडा नं.",
+        'land_use': "भूउपयोग क्षेत्र",
+        'select_placeholder': "टाईप गर्नुहोस् या छान्नुहोस्",
+        'missing_cols_msg': "केही columns फेला परेनन्",
+        'available_cols_msg': "उपलब्ध columns"
+    },
+    'EN': {
+        'header_title': "Land Use Classification Search System",
+        'sidebar_title': "Filters & Controls",
+        'refresh_button': "Refresh Data",
+        'loading_msg': "Loading Data...",
+        'connection_error': "Could not load data. Please check internet connection or try again.",
+        'total_results': "Total Results",
+        'kit_number': "Plot/Kit No.",
+        'vdc': "Former VDC",
+        'ward': "Ward No.",
+        'land_use': "Land Use",
+        'select_placeholder': "Type or Select",
+        'missing_cols_msg': "Some columns missing",
+        'available_cols_msg': "Available Columns"
+    }
+}
 
 # Function to load data
 @st.cache_data(ttl=600, show_spinner=False)
@@ -34,10 +61,16 @@ def load_data():
         return None
 
 def main():
-    st.title(HEADER_TITLE)
+    # Language Toggle
+    # Defaulting to Nepali (index 0)
+    lang_choice = st.sidebar.radio("भाषा (Language)", options=["नेपाली", "English"], horizontal=True)
+    lang_code = 'NP' if lang_choice == "नेपाली" else 'EN'
+    t = TRANSLATIONS[lang_code]
+
+    st.title(t['header_title'])
 
     # Load data
-    with st.spinner("तथ्याङ्क लोड हुँदैछ..."):
+    with st.spinner(t['loading_msg']):
         df = load_data()
 
     if df is not None:
@@ -45,10 +78,10 @@ def main():
         df.columns = df.columns.str.strip()
         
         # Sidebar for filtering and controls
-        st.sidebar.title(SIDEBAR_TITLE)
+        st.sidebar.title(t['sidebar_title'])
         
         # Fresh Data Refresh Button
-        if st.sidebar.button(REFRESH_BUTTON_LABEL, type="primary", use_container_width=True):
+        if st.sidebar.button(t['refresh_button'], type="primary", use_container_width=True):
             st.cache_data.clear()
             try:
                 st.rerun()
@@ -86,7 +119,7 @@ def main():
                 f"{col_plot}", 
                 plot_options,
                 index=None,
-                placeholder="छान्नुहोस् (Select)"
+                placeholder=t['select_placeholder']
             )
             if selected_plot:
                  # Search against string version of the column
@@ -100,7 +133,7 @@ def main():
                 f"{col_vdc}", 
                 vdc_options, 
                 index=None, 
-                placeholder="छान्नुहोस् (Select)"
+                placeholder=t['select_placeholder']
             )
             if selected_vdc:
                 filtered_df = filtered_df[filtered_df[col_vdc] == selected_vdc]
@@ -113,7 +146,7 @@ def main():
                 f"{col_ward}", 
                 ward_options, 
                 index=None, 
-                placeholder="छान्नुहोस् (Select)"
+                placeholder=t['select_placeholder']
             )
             if selected_ward:
                 filtered_df = filtered_df[filtered_df[col_ward] == selected_ward]
