@@ -32,8 +32,10 @@ TRANSLATIONS = {
         'kit_number': "कित्ता नं.",
         'vdc': "साविक गा.",
         'ward': "वडा नं.",
+        'sheet_no': "सिट नं.",
         'land_use': "भूउपयोग क्षेत्र",
         'select_placeholder': "टाईप गर्नुहोस् या छान्नुहोस्",
+        'search_placeholder': "यहाँ टाईप गर्नुहोस्...",
         'missing_cols_msg': "केही columns फेला परेनन्",
         'available_cols_msg': "उपलब्ध columns",
         'select_sheet': "पाना चयन गर्नुहोस् (Select Sheet)"
@@ -48,8 +50,10 @@ TRANSLATIONS = {
         'kit_number': "Plot/Kitta No.",
         'vdc': "VDC",
         'ward': "Ward No.",
+        'sheet_no': "Sheet No.",
         'land_use': "Land Use",
         'select_placeholder': "Type or Select",
+        'search_placeholder': "Type here to search...",
         'missing_cols_msg': "Some columns missing",
         'available_cols_msg': "Available Columns",
         'select_sheet': "Select Sheet"
@@ -74,7 +78,7 @@ def find_header_row(df):
     """
     Search first 10 rows to find a row that looks like a header (contains at least 2 keywords).
     """
-    keywords = ['कित्ता', 'साविक', 'वडा', 'भूउपयोग', 'सि.नं.', 'Plot', 'Ward', 'VDC']
+    keywords = ['कित्ता', 'साविक', 'वडा', 'सिट', 'भूउपयोग', 'सि.नं.', 'Plot', 'Ward', 'Sheet', 'VDC']
     for i in range(min(10, len(df))):
         row_values = df.iloc[i].astype(str).tolist()
         match_count = sum(1 for val in row_values if any(k.lower() in val.lower() for k in keywords))
@@ -90,6 +94,7 @@ def identify_columns(df):
     mapping = {
         'vdc': None,
         'ward': None,
+        'sheet_no': None,
         'plot': None,
         'land_use': None
     }
@@ -98,6 +103,7 @@ def identify_columns(df):
     keywords = {
         'vdc': ['साविक गा', 'साविक', 'गा.वि.स', 'VDC', 'Municipality', 'Gapa', 'Napa'],
         'ward': ['वडा', 'वडा नं', 'Ward', 'Ward No'],
+        'sheet_no': ['सिट नं', 'सिट', 'Sheet', 'Sheet No'],
         'plot': ['कित्ता', 'कित्ता नं', 'Plot', 'Kitta', 'Kitta No'],
         'land_use': ['भूउपयोग क्षेत्र', 'भूउपयोग', 'Land Use', 'Classification']
     }
@@ -572,6 +578,7 @@ def main():
             col_mapping = identify_columns(df)
             col_vdc = col_mapping['vdc']
             col_ward = col_mapping['ward']
+            col_sheet = col_mapping['sheet_no']
             col_plot = col_mapping['plot']
             col_land_use = col_mapping['land_use']
             
@@ -580,21 +587,9 @@ def main():
             # Make filters work
             filtered_df = df.copy()
 
-            # 2. Filter for VDC
-            if col_vdc:
-                vdc_options = sorted(df[col_vdc].dropna().unique().tolist())
-                selected_vdc = st.sidebar.selectbox(
-                    t['vdc'], 
-                    vdc_options, 
-                    index=None, 
-                    placeholder=t['select_placeholder']
-                )
-                if selected_vdc:
-                    filtered_df = filtered_df[filtered_df[col_vdc] == selected_vdc]
-            
-            # 3. Filter for Ward (depends on VDC)
+            # 1. Filter for Ward
             if col_ward:
-                ward_options = sorted(filtered_df[col_ward].dropna().unique().tolist())
+                ward_options = sorted(df[col_ward].dropna().astype(str).unique().tolist())
                 selected_ward = st.sidebar.selectbox(
                     t['ward'], 
                     ward_options, 
@@ -602,22 +597,31 @@ def main():
                     placeholder=t['select_placeholder']
                 )
                 if selected_ward:
-                    filtered_df = filtered_df[filtered_df[col_ward] == selected_ward]
+                    filtered_df = filtered_df[filtered_df[col_ward].astype(str) == selected_ward]
             
-            # 1. Filter for Plot (First one)
-            if col_plot:
-                plot_options = sorted(df[col_plot].dropna().unique().astype(str).tolist())
-                selected_plot = st.sidebar.selectbox(
-                    t['kit_number'], 
-                    plot_options,
-                    index=None,
+            # 2. Filter for Sheet No (depends on Ward)
+            if col_sheet:
+                sheet_options = sorted(filtered_df[col_sheet].dropna().astype(str).unique().tolist())
+                selected_sheet = st.sidebar.selectbox(
+                    t['sheet_no'], 
+                    sheet_options, 
+                    index=None, 
                     placeholder=t['select_placeholder']
                 )
-                if selected_plot:
-                    filtered_df = filtered_df[filtered_df[col_plot].astype(str) == selected_plot]
+                if selected_sheet:
+                    filtered_df = filtered_df[filtered_df[col_sheet].astype(str) == selected_sheet]
+            
+            # 3. Filter for Plot (Text Input)
+            if col_plot:
+                search_plot = st.sidebar.text_input(
+                    t['kit_number'],
+                    placeholder=t['search_placeholder']
+                )
+                if search_plot:
+                    filtered_df = filtered_df[filtered_df[col_plot].astype(str).str.contains(search_plot, case=False, na=False)]
             
             # Put important columns first
-            found_cols = [c for c in [col_plot, col_vdc, col_ward] if c]
+            found_cols = [c for c in [col_plot, col_ward, col_sheet] if c]
             other_cols = [c for c in filtered_df.columns if c not in found_cols]
             final_cols = found_cols + other_cols
             filtered_df = filtered_df[final_cols]
@@ -628,8 +632,8 @@ def main():
             
             # Help fix if columns missing
             missing_cols = []
-            if not col_vdc: missing_cols.append(t['vdc'])
             if not col_ward: missing_cols.append(t['ward'])
+            if not col_sheet: missing_cols.append(t['sheet_no'])
             if not col_plot: missing_cols.append(t['kit_number'])
             if not col_land_use: missing_cols.append(t['land_use'])
 
@@ -637,7 +641,7 @@ def main():
                 st.warning(f"केही स्तम्भहरू फेला परेनन् (Some columns missing): {', '.join(missing_cols)}")
                 st.info(f"उपलब्ध स्तम्भहरू (Available Columns): {', '.join(available_columns)}")
         else:
-            st.info("कृपया डेटा हेर्नको लागि एउटा पाना चयन गर्नुहोस्। (Please select a sheet to view data.)")
+            st.info("कृपया डेटा हेर्नको लागि एउटा साविक गा.वि.स. चयन गर्नुहोस्। (Please select a VDC to view data.)")
 
 if __name__ == "__main__":
     main()
