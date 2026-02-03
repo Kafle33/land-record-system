@@ -38,7 +38,7 @@ TRANSLATIONS = {
         'search_placeholder': "यहाँ टाईप गर्नुहोस्...",
         'missing_cols_msg': "केही columns फेला परेनन्",
         'available_cols_msg': "उपलब्ध columns",
-        'select_sheet': "पाना चयन गर्नुहोस् (Select Sheet)"
+        'select_sheet': "साविक गा.वि.स. चयन गर्नुहोस् (Select a VDC)"
     },
     'EN': {
         'header_title': "Land Use Classification Search System",
