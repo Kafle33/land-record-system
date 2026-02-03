@@ -23,7 +23,7 @@
       const headerBuffer = await headerBlob.arrayBuffer();
 
       mount({
-        requirements: ["streamlit", "pandas", "requests"],
+        requirements: ["streamlit", "pandas", "requests", "openpyxl"],
         entrypoint: "app.py",
         files: {
           "app.py": mainScript,
