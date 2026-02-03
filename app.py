@@ -542,7 +542,8 @@ def main():
         st.sidebar.title(t['sidebar_title'])
         
         # Sheet Selection
-        sheet_names = list(all_sheets.keys())
+        # Skip the first sheet (Cover Page)
+        sheet_names = list(all_sheets.keys())[1:] if len(all_sheets) > 1 else list(all_sheets.keys())
         selected_sheet_name = st.sidebar.selectbox(
             t['select_sheet'],
             sheet_names,
